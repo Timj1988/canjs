@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<!--####################################################################
+	THIS IS A GENERATED FILE -- ANY CHANGES MADE WILL BE OVERWRITTEN
+
+	INSTEAD CHANGE:
+	source: [object Object]
+	@typedef connection.getListData
+######################################################################## -->
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title></title>
+	
+	<link rel="stylesheet" type="text/css" href="./static/bundles/bit-docs-site/static.css">
+	
+</head>
+
+<body>
+	<header><nav class="navbar">
+	<a class="brand" href="../index.html">CanJS</a>
+
+	<ul class="bitovi-menu">
+		<li class="dropdown">
+			<a href="http://bitovi.com" class="bitovi icon-bits">Bitovi</a>
+			<ul class="dropdown-menu">
+				<li><a href="http://bitovi.com">Bitovi.com</a></li>
+				<li><a href="http://bitovi.com/blog/">Blog</a></li>
+				<li><a href="http://bitovi.com/consulting/">Consulting</a></li>
+				<li><a href="http://bitovi.com/training/">Training</a></li>
+				<li><a href="http://bitovi.com/open-source/">Open Source</a></li>
+			</ul>
+		</li>
+	</ul>
+
+	<ul class="navbar-items">
+		<li class="dropdown">
+				<a href="http://github.com/canjs/canjs">Github</a>
+				<ul class="dropdown-menu">
+      		<li><a href="http://github.com/canjs/can-connect">can-connect</a></li>
+					<li><a href=".">can-set</a></li>
+					<li><a href=".">can-compute</a></li>
+					<li><a href=".">can-component</a></li>
+				</ul>
+		</li>
+		<li>
+			<a href="https://gitter.im/canjs/canjs">Chat</a>
+		</li>
+		<li>
+			<a href="http://forums.donejs.com/c/canjs">Forum</a>
+		</li>
+	</ul>
+
+</nav>
+</header>
+	<div class='main-container'>
+
+	<nav class="sidebar">
+    
+        
+
+    
+</nav>
+
+
+<article>
+	
+		<section class="title">
+	<h1>getListData</h1>
+</section>
+
+	
+
+	
+		
+			<section class="description">
+    <p>Retrieves list data for a particular set.</p>
+
+</section>
+
+		
+	
+
+
+
+
+<h2><code>function(set)</code></h2>
+<p>Returns a promise that resolves to the list data for a particular set.</p>
+
+
+
+<ol>
+
+<li> <b>set</b> <code>{Object}</code>: <p>A object that represents the set of data needed to be loaded.</p>
+ </li>
+
+</ol>
+
+
+<ul>
+    <li><b>returns</b> : <p>A promise that resolves to the <a href="can-connect.listData.html">ListData</a> format.</p>
+ </li>
+</ul>
+
+
+
+
+
+
+
+
+	
+		
+			<section class="body">
+    <h2>Use</h2>
+<p>Extensions like <a href="can-connect/data-url.html">data-url</a> make it easy to implement <code>getListData</code>, but it can be as simple as:</p>
+<pre><code>var connection = connect([],{
+  getListData: function(set){
+    return $.get(set)
+  }
+})
+</code></pre>
+
+</section>
+
+		
+	
+</article>
+</div>
+
+	<footer><p>CanJS is part of <a href="http://donejs.com">DoneJS</a>. Created and maintained by the open source team at <a href="http://bitovi.com">Bitovi</a>. <strong>Currently v3.0.0.</strong></p></footer>
+
+	<script type="text/javascript">
+		var docObject = {"content":"<div class='main-container'>\n\n\t<nav class=\"sidebar\">\n    \n        \n\n    \n</nav>\n\n\n<article>\n\t\n\t\t<section class=\"title\">\n\t<h1>getListData</h1>\n</section>\n\n\t\n\n\t\n\t\t\n\t\t\t<section class=\"description\">\n    <p>Retrieves list data for a particular set.</p>\n\n</section>\n\n\t\t\n\t\n\n\n\n\n<h2><code>function(set)</code></h2>\n<p>Returns a promise that resolves to the list data for a particular set.</p>\n\n\n\n<ol>\n\n<li> <b>set</b> <code>{Object}</code>: <p>A object that represents the set of data needed to be loaded.</p>\n </li>\n\n</ol>\n\n\n<ul>\n    <li><b>returns</b> : <p>A promise that resolves to the <a href=\"can-connect.listData.html\">ListData</a> format.</p>\n </li>\n</ul>\n\n\n\n\n\n\n\n\n\t\n\t\t\n\t\t\t<section class=\"body\">\n    <h2>Use</h2>\n<p>Extensions like <a href=\"can-connect/data-url.html\">data-url</a> make it easy to implement <code>getListData</code>, but it can be as simple as:</p>\n<pre><code>var connection = connect([],{\n  getListData: function(set){\n    return $.get(set)\n  }\n})\n</code></pre>\n\n</section>\n\n\t\t\n\t\n</article>\n</div>\n","src":{"path":"node_modules/can-connect/docs/data_interface/getListData.md"},"description":"Retrieves list data for a particular set. \n","type":"typedef","title":"getListData","types":[{"type":"function","returns":{"types":[{"type":"Promise","template":[{"types":[{"type":"can-connect.listData"}]}]}],"description":"A promise that resolves to the [can-connect.listData] format.\n"},"params":[{"types":[{"type":"Object","options":[]}],"name":"set","description":"A object that represents the set of data needed to be loaded.\n"}],"description":"\n\n  Returns a promise that resolves to the list data for a particular set.\n"}],"name":"connection.getListData","parent":"can-connect.data_interface","_curParam":{"types":[{"type":"Object","options":[]}],"name":"set","description":"A object that represents the set of data needed to be loaded.\n"},"_curReturn":{"types":[{"type":"Promise","template":[{"types":[{"type":"can-connect.listData"}]}]}],"description":"A promise that resolves to the [can-connect.listData] format.\n"},"comment":" "};
+	</script>
+
+	
+		<script>
+		  steal = {
+		    instantiated: {
+		      "bundles/bit-docs-site/static.css!$css" : null
+		    }
+		  }
+		</script>
+		<script type='text/javascript'
+				data-main="bit-docs-site/static"
+				src="./static/node_modules/steal/steal.production.js"></script>
+	
+</body>
+
+</html>

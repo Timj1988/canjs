@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<!--####################################################################
+	THIS IS A GENERATED FILE -- ANY CHANGES MADE WILL BE OVERWRITTEN
+
+	INSTEAD CHANGE:
+	source: [object Object]
+	@function can-define.types.get
+######################################################################## -->
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title></title>
+	
+	<link rel="stylesheet" type="text/css" href="./static/bundles/bit-docs-site/static.css">
+	
+</head>
+
+<body>
+	<header><nav class="navbar">
+	<a class="brand" href="../index.html">CanJS</a>
+
+	<ul class="bitovi-menu">
+		<li class="dropdown">
+			<a href="http://bitovi.com" class="bitovi icon-bits">Bitovi</a>
+			<ul class="dropdown-menu">
+				<li><a href="http://bitovi.com">Bitovi.com</a></li>
+				<li><a href="http://bitovi.com/blog/">Blog</a></li>
+				<li><a href="http://bitovi.com/consulting/">Consulting</a></li>
+				<li><a href="http://bitovi.com/training/">Training</a></li>
+				<li><a href="http://bitovi.com/open-source/">Open Source</a></li>
+			</ul>
+		</li>
+	</ul>
+
+	<ul class="navbar-items">
+		<li class="dropdown">
+				<a href="http://github.com/canjs/canjs">Github</a>
+				<ul class="dropdown-menu">
+      		<li><a href="http://github.com/canjs/can-connect">can-connect</a></li>
+					<li><a href=".">can-set</a></li>
+					<li><a href=".">can-compute</a></li>
+					<li><a href=".">can-component</a></li>
+				</ul>
+		</li>
+		<li>
+			<a href="https://gitter.im/canjs/canjs">Chat</a>
+		</li>
+		<li>
+			<a href="http://forums.donejs.com/c/canjs">Forum</a>
+		</li>
+	</ul>
+
+</nav>
+</header>
+	<div class='main-container'>
+
+	<nav class="sidebar">
+    
+        
+
+    
+</nav>
+
+
+<article>
+	
+		<section class="title">
+	<h1>get</h1>
+</section>
+
+	
+
+	
+		
+			<section class="description">
+    <p>Specify what happens when a certain property is read on a map. <code>get</code> functions
+work like a [can.compute] and automatically update themselves when a dependent
+observable value is changed.</p>
+
+</section>
+
+		
+	
+
+
+
+
+<h2><code>get( [lastSetValue] )</code></h2>
+<p>Defines the behavior when a value is read on a [can.Map]. Used to provide properties that derive their value from
+other properties of the map, or <strong>update</strong> their value from
+the changes in the value that was set.</p>
+
+
+
+<ol>
+
+<li> <b>lastSetValue</b> <code>{*}</code>: <p>The value last set by <code>.attr(property, value)</code>.  Typically, <em>lastSetValue</em>
+should be an observable value, like a [can.compute] or promise. If it's not, it's likely
+that a [can.Map.prototype.define.set define.set] should be used instead.</p>
+ </li>
+
+</ol>
+
+
+<ul>
+    <li><b>returns</b> : <p>The value of the property.</p>
+ </li>
+</ul>
+
+
+
+
+<h2><code>get( lastSetValue, setAttrValue(value) )</code></h2>
+<p>Asynchronously defines the behavior when a value is read on a [can.Map]. Used to provide property values that
+are available asynchronously.</p>
+
+
+
+<ol>
+
+<li> <b>lastSetValue</b> <code>{*}</code>: <p>The value last set by <code>.attr(property, value)</code>.</p>
+ </li>
+
+<li> <b>setAttrValue</b> <code>{function(value)}</code>: <p>Updates the value of the property. This can be called
+multiple times if needed.</p>
+ </li>
+
+</ol>
+
+
+
+
+
+
+
+
+
+	
+		
+			<section class="body">
+    <h2>Use</h2>
+<p>Getter methods are useful for:</p>
+<ul>
+<li>Defining virtual properties on a map.</li>
+<li>Defining property values that change with their <em>internal</em> set value.</li>
+</ul>
+<h2>Virtual properties</h2>
+<p>Virtual properties are properties that don't actually store any value, but derive their value
+from some other properties on the map.</p>
+<p>Whenever a getter is provided, it is wrapped in a [can.compute], which ensures
+that whenever its dependent properties change, a change event will fire for this property also.</p>
+<pre><code>var Person = can.Model.extend({
+    define: {
+        fullName: {
+            get: function () {
+                return this.attr(&quot;first&quot;) + &quot; &quot; + this.attr(&quot;last&quot;);
+            }
+        }
+    }
+});
+
+var p = new Person({first: &quot;Justin&quot;, last: &quot;Meyer&quot;});
+
+p.attr(&quot;fullName&quot;); // &quot;Justin Meyer&quot;
+
+p.bind(&quot;fullName&quot;, function(ev, newVal){
+  newVal //-&gt; &quot;Lincoln Meyer&quot;;
+});
+
+p.attr(&quot;first&quot;,&quot;Lincoln&quot;);
+</code></pre>
+<h2>Asyncronous virtual properties</h2>
+<p>Often, a virtual property's value only becomes available after some period of time.  For example,
+given a <code>personId</code>, one might want to retrieve a related person:</p>
+<pre><code>var AppState = can.Map.extend({
+  define: {
+    person: {
+      get: function(lastSetValue, setAttrValue){
+        Person.findOne({id: this.attr(&quot;personId&quot;)})
+            .then(function(person){
+                setAttrValue(person);
+            });
+      }
+    }
+  }
+});
+</code></pre>
+<p>Asyncronous properties should be bound to before reading their value.  If
+they are not bound to, the <code>get</code> function will be called each time.</p>
+<p>The following example will make multiple <code>Person.findOne</code> requests:</p>
+<pre><code>var state = new AppState({personId: 5});
+state.attr(&quot;person&quot;) //-&gt; undefined
+
+// called sometime later ...
+state.attr(&quot;person&quot;) //-&gt; undefined
+</code></pre>
+<p>However, by binding, the compute only reruns the <code>get</code> function once <code>personId</code> changes:</p>
+<pre><code>var state = new AppState({personId: 5});
+
+state.bind(&quot;person&quot;, function(){})
+
+state.attr(&quot;person&quot;) //-&gt; undefined
+
+// called sometime later
+state.attr(&quot;person&quot;) //-&gt; Person&lt;{id: 5}&gt;
+</code></pre>
+<p>A template like [can.stache] will automatically bind for you, so you can pass
+<code>state</code> to the template like the following without binding:</p>
+<pre><code>var template = can.stache(&quot;&lt;span&gt;{{person.fullName}}&lt;/span&gt;&quot;);
+var state = new AppState({});
+var frag = template(state);
+
+state.attr(&quot;personId&quot;,5);
+frag.childNodes[0].innerHTML //=&gt; &quot;&quot;
+
+// sometime later
+frag.childNodes[0].innerHTML //=&gt; &quot;Lincoln Meyer&quot;
+
+</code></pre>
+<p>The magic tags are updated as <code>personId</code>, <code>person</code>, and <code>fullName</code> change.</p>
+<h2>Properties values that change with their <em>internal</em> set value</h2>
+<p>A getter can be used to derive a value from a set value. A getter's
+<code>lastSetValue</code> argument is the last value set by [can.Map::attr].</p>
+<p>For example, a property might be set to a compute, but when read, provides the value
+of the compute.</p>
+<pre><code>var MyMap = can.Map.extend({
+  define: {
+    value: {
+      get: function( lastSetValue ){
+        return lastSetValue();
+      }
+    }
+  }
+});
+
+var map = new MyMap();
+var compute = can.compute(1);
+map.attr(&quot;value&quot;, compute);
+
+map.attr(&quot;value&quot;) //-&gt; 1
+compute(2);
+map.attr(&quot;value&quot;) //-&gt; 2
+</code></pre>
+<p>This technique should only be used when the <code>lastSetValue</code> is some form of
+observable, that when it changes, can update the <code>getter</code> value.</p>
+<p>For simple conversions, [can.Map.prototype.define.set] or [can.Map.prototype.define.type] should be used.</p>
+<h2>Updating the virtual property value</h2>
+<p>It's very common (and better performing) to update the virtual property value
+instead of replacing it.</p>
+<p>The following example creates an empty <code>locationIds</code> <a href="can.List.html">can.List</a> when a new
+instance of <code>Store</code> is created.  However, as <code>locations</code> change,
+the <a href="can.List.html">can.List</a> will be updated with the <code>id</code>s of the <code>locations</code>.</p>
+<pre><code>var Store = can.Map.extend({
+    define: {
+        locationIds: {
+            Value: can.List,
+            get: function(initialValue){
+                var ids = [];
+                this.attr('locations').each(function(location){
+                    ids.push(location.attr(&quot;id&quot;));
+                });
+                return initialValue.replace(ids);
+            }
+        }
+    }
+});
+</code></pre>
+
+</section>
+
+		
+	
+</article>
+</div>
+
+	<footer><p>CanJS is part of <a href="http://donejs.com">DoneJS</a>. Created and maintained by the open source team at <a href="http://bitovi.com">Bitovi</a>. <strong>Currently v3.0.0.</strong></p></footer>
+
+	<script type="text/javascript">
+		var docObject = {"content":"<div class='main-container'>\n\n\t<nav class=\"sidebar\">\n    \n        \n\n    \n</nav>\n\n\n<article>\n\t\n\t\t<section class=\"title\">\n\t<h1>get</h1>\n</section>\n\n\t\n\n\t\n\t\t\n\t\t\t<section class=\"description\">\n    <p>Specify what happens when a certain property is read on a map. <code>get</code> functions\nwork like a [can.compute] and automatically update themselves when a dependent\nobservable value is changed.</p>\n\n</section>\n\n\t\t\n\t\n\n\n\n\n<h2><code>get( [lastSetValue] )</code></h2>\n<p>Defines the behavior when a value is read on a [can.Map]. Used to provide properties that derive their value from\nother properties of the map, or <strong>update</strong> their value from\nthe changes in the value that was set.</p>\n\n\n\n<ol>\n\n<li> <b>lastSetValue</b> <code>{*}</code>: <p>The value last set by <code>.attr(property, value)</code>.  Typically, <em>lastSetValue</em>\nshould be an observable value, like a [can.compute] or promise. If it's not, it's likely\nthat a [can.Map.prototype.define.set define.set] should be used instead.</p>\n </li>\n\n</ol>\n\n\n<ul>\n    <li><b>returns</b> : <p>The value of the property.</p>\n </li>\n</ul>\n\n\n\n\n<h2><code>get( lastSetValue, setAttrValue(value) )</code></h2>\n<p>Asynchronously defines the behavior when a value is read on a [can.Map]. Used to provide property values that\nare available asynchronously.</p>\n\n\n\n<ol>\n\n<li> <b>lastSetValue</b> <code>{*}</code>: <p>The value last set by <code>.attr(property, value)</code>.</p>\n </li>\n\n<li> <b>setAttrValue</b> <code>{function(value)}</code>: <p>Updates the value of the property. This can be called\nmultiple times if needed.</p>\n </li>\n\n</ol>\n\n\n\n\n\n\n\n\n\n\t\n\t\t\n\t\t\t<section class=\"body\">\n    <h2>Use</h2>\n<p>Getter methods are useful for:</p>\n<ul>\n<li>Defining virtual properties on a map.</li>\n<li>Defining property values that change with their <em>internal</em> set value.</li>\n</ul>\n<h2>Virtual properties</h2>\n<p>Virtual properties are properties that don't actually store any value, but derive their value\nfrom some other properties on the map.</p>\n<p>Whenever a getter is provided, it is wrapped in a [can.compute], which ensures\nthat whenever its dependent properties change, a change event will fire for this property also.</p>\n<pre><code>var Person = can.Model.extend({\n    define: {\n        fullName: {\n            get: function () {\n                return this.attr(&quot;first&quot;) + &quot; &quot; + this.attr(&quot;last&quot;);\n            }\n        }\n    }\n});\n\nvar p = new Person({first: &quot;Justin&quot;, last: &quot;Meyer&quot;});\n\np.attr(&quot;fullName&quot;); // &quot;Justin Meyer&quot;\n\np.bind(&quot;fullName&quot;, function(ev, newVal){\n  newVal //-&gt; &quot;Lincoln Meyer&quot;;\n});\n\np.attr(&quot;first&quot;,&quot;Lincoln&quot;);\n</code></pre>\n<h2>Asyncronous virtual properties</h2>\n<p>Often, a virtual property's value only becomes available after some period of time.  For example,\ngiven a <code>personId</code>, one might want to retrieve a related person:</p>\n<pre><code>var AppState = can.Map.extend({\n  define: {\n    person: {\n      get: function(lastSetValue, setAttrValue){\n        Person.findOne({id: this.attr(&quot;personId&quot;)})\n            .then(function(person){\n                setAttrValue(person);\n            });\n      }\n    }\n  }\n});\n</code></pre>\n<p>Asyncronous properties should be bound to before reading their value.  If\nthey are not bound to, the <code>get</code> function will be called each time.</p>\n<p>The following example will make multiple <code>Person.findOne</code> requests:</p>\n<pre><code>var state = new AppState({personId: 5});\nstate.attr(&quot;person&quot;) //-&gt; undefined\n\n// called sometime later ...\nstate.attr(&quot;person&quot;) //-&gt; undefined\n</code></pre>\n<p>However, by binding, the compute only reruns the <code>get</code> function once <code>personId</code> changes:</p>\n<pre><code>var state = new AppState({personId: 5});\n\nstate.bind(&quot;person&quot;, function(){})\n\nstate.attr(&quot;person&quot;) //-&gt; undefined\n\n// called sometime later\nstate.attr(&quot;person&quot;) //-&gt; Person&lt;{id: 5}&gt;\n</code></pre>\n<p>A template like [can.stache] will automatically bind for you, so you can pass\n<code>state</code> to the template like the following without binding:</p>\n<pre><code>var template = can.stache(&quot;&lt;span&gt;{{person.fullName}}&lt;/span&gt;&quot;);\nvar state = new AppState({});\nvar frag = template(state);\n\nstate.attr(&quot;personId&quot;,5);\nfrag.childNodes[0].innerHTML //=&gt; &quot;&quot;\n\n// sometime later\nfrag.childNodes[0].innerHTML //=&gt; &quot;Lincoln Meyer&quot;\n\n</code></pre>\n<p>The magic tags are updated as <code>personId</code>, <code>person</code>, and <code>fullName</code> change.</p>\n<h2>Properties values that change with their <em>internal</em> set value</h2>\n<p>A getter can be used to derive a value from a set value. A getter's\n<code>lastSetValue</code> argument is the last value set by [can.Map::attr].</p>\n<p>For example, a property might be set to a compute, but when read, provides the value\nof the compute.</p>\n<pre><code>var MyMap = can.Map.extend({\n  define: {\n    value: {\n      get: function( lastSetValue ){\n        return lastSetValue();\n      }\n    }\n  }\n});\n\nvar map = new MyMap();\nvar compute = can.compute(1);\nmap.attr(&quot;value&quot;, compute);\n\nmap.attr(&quot;value&quot;) //-&gt; 1\ncompute(2);\nmap.attr(&quot;value&quot;) //-&gt; 2\n</code></pre>\n<p>This technique should only be used when the <code>lastSetValue</code> is some form of\nobservable, that when it changes, can update the <code>getter</code> value.</p>\n<p>For simple conversions, [can.Map.prototype.define.set] or [can.Map.prototype.define.type] should be used.</p>\n<h2>Updating the virtual property value</h2>\n<p>It's very common (and better performing) to update the virtual property value\ninstead of replacing it.</p>\n<p>The following example creates an empty <code>locationIds</code> <a href=\"can.List.html\">can.List</a> when a new\ninstance of <code>Store</code> is created.  However, as <code>locations</code> change,\nthe <a href=\"can.List.html\">can.List</a> will be updated with the <code>id</code>s of the <code>locations</code>.</p>\n<pre><code>var Store = can.Map.extend({\n    define: {\n        locationIds: {\n            Value: can.List,\n            get: function(initialValue){\n                var ids = [];\n                this.attr('locations').each(function(location){\n                    ids.push(location.attr(&quot;id&quot;));\n                });\n                return initialValue.replace(ids);\n            }\n        }\n    }\n});\n</code></pre>\n\n</section>\n\n\t\t\n\t\n</article>\n</div>\n","src":{"path":"node_modules/can-define/docs/types.get.md"},"description":"\nSpecify what happens when a certain property is read on a map. `get` functions\nwork like a [can.compute] and automatically update themselves when a dependent\nobservable value is changed.\n","title":"get","name":"can-define.types.get","type":"function","parent":"can.Map.prototype.define","signatures":[{"code":"get( [lastSetValue] )","description":"\n\n  Defines the behavior when a value is read on a [can.Map]. Used to provide properties that derive their value from\n  other properties of the map, or __update__ their value from\n  the changes in the value that was set.\n","params":[{"types":[{"type":"*"}],"optional":true,"name":"lastSetValue","description":"The value last set by `.attr(property, value)`.  Typically, _lastSetValue_\nshould be an observable value, like a [can.compute] or promise. If it's not, it's likely\nthat a [can.Map.prototype.define.set define.set] should be used instead.\n"}],"returns":{"types":[{"type":"*"}],"description":"The value of the property.\n"}},{"code":"get( lastSetValue, setAttrValue(value) )","description":"\n\n  Asynchronously defines the behavior when a value is read on a [can.Map]. Used to provide property values that\n  are available asynchronously.\n","params":[{"types":[{"type":"*"}],"name":"lastSetValue","description":"The value last set by `.attr(property, value)`.\n"},{"types":[{"type":"function","returns":{"types":[{"type":"undefined"}]},"params":[{"types":[{"type":"*"}],"name":"value"}]}],"name":"setAttrValue","description":"Updates the value of the property. This can be called\nmultiple times if needed.\n"}]}],"_curReturn":{"types":[{"type":"*"}],"description":"The value of the property.\n"},"_curParam":{"types":[{"type":"function","returns":{"types":[{"type":"undefined"}]},"params":[{"types":[{"type":"*"}],"name":"value"}]}],"name":"setAttrValue","description":"Updates the value of the property. This can be called\nmultiple times if needed.\n"},"comment":" "};
+	</script>
+
+	
+		<script>
+		  steal = {
+		    instantiated: {
+		      "bundles/bit-docs-site/static.css!$css" : null
+		    }
+		  }
+		</script>
+		<script type='text/javascript'
+				data-main="bit-docs-site/static"
+				src="./static/node_modules/steal/steal.production.js"></script>
+	
+</body>
+
+</html>
